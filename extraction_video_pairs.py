@@ -8,12 +8,12 @@ ydl_opts = {
     'format': 'bestaudio/best',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
+        'preferredcodec': 'wav',
         'preferredquality': '192',
-    }],
-    'ffmpeg_location': r'ffmpeg-2023-07-06-git-f00222e81f-essentials_build\bin',
+    }], 
     'outtmpl': f'{output_dir}/%(title)s.%(ext)s'
 }
+
 
 def get_songs(csv_file):
     songs = []

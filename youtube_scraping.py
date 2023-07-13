@@ -1,4 +1,6 @@
 import yt_dlp as youtube_dl
+from yt_dlp import YoutubeDL
+from youtube_search import YoutubeSearch
 import csv
 import re
 
@@ -43,14 +45,44 @@ def get_videos(channel_url):
             continue
         if 'Live' in title:
             continue
-            #Getting the Piano Cover
+        
+        # Getting the Piano Cover
+        num_results = 5
         search_query = title + ' Piano Cover'
+
+        # Configure the options for the youtube_search plugin
+        ydl_opts = {
+            'extract_flat': 'in_playlist',
+            'skip_download': True,
+            'youtube_include_dash_manifest': False,
+            'extractor_args': {
+                'youtube_search': {
+                    'limit': num_results,
+                }
+            },
+            'default-search': "ytsearch"
+        }
+        y_dl = YoutubeDL(ydl_opts)
         search_url = f"ytsearch:{search_query}"
-        search_results = ydl.extract_info(search_url, download=False)
+        search_results = y_dl.extract_info(search_url, download=False)
+
+        results = YoutubeSearch(search_query, max_results=num_results).to_dict()
+        for result in results:
+            print(f"Title: {video['title']}")
+            print(f"Video ID: {video['id']}")
+            print(f"URL: https://www.youtube.com/watch?v={video['id']}")
+            print()
+        #print(search_results['entries'])
+        #search_results = search_results['entries'][:num_results]
+        #print(len(search_results))
         url = video['webpage_url'].replace('https://www.youtube.com/watch?v=', '')
-        result_url = search_results['entries'][0]['webpage_url']
-        result_url = result_url.replace('https://www.youtube.com/watch?v=', '')
-        new_lines.append([title, url, result_url])
+        for result in search_results:
+            print(result['title'])
+            if "Piano" not in result['title']:
+                continue
+            result_url = result['url']
+            result_url = result_url.replace('https://www.youtube.com/watch?v=', '')
+            new_lines.append([title, result['title'], url, result_url])
 
     updated_lines = existing_lines + new_lines
 
