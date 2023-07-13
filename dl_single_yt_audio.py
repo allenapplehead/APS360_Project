@@ -10,7 +10,6 @@ ydl_opts = {
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'ffmpeg_location': r'ffmpeg-2023-07-06-git-f00222e81f-essentials_build\bin'
 }
 
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
