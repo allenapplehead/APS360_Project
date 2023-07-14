@@ -7,6 +7,9 @@ from basic_pitch import ICASSP_2022_MODEL_PATH
 
 import audio_alignment_v2
 
+IN_FOLDER = "test_data/"
+OUT_FOLDER = "clean_data/"
+
 class SongPianoPair():
     def __init__(self, raw_song_audio, raw_piano_audio_path, output_song_midi_path, output_piano_midi_path, temp_song_audio_path="temp.wav"):
         self.raw_song_audio = raw_song_audio
@@ -20,30 +23,24 @@ class SongPianoPair():
         self.piano_midi = None
 
     def preprocess(self, basic_pitch_model):
-        print("1")
         _, self.raw_piano_midi, _ = predict(self.raw_piano_audio_path, basic_pitch_model)
-        print("2")
         audio_alignment_v2.align_song_piano(self, False)
-        print("3")
         _, self.song_midi, _ = predict(self.temp_song_audio_path, basic_pitch_model)
         self.song_midi.write(self.song_midi_path)
-        print("4")
         os.remove(self.temp_song_audio_path)
-
-basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
-
-print("0")
-song_audio, _ = librosa.load("test_data/source_0001.wav", sr=audio_alignment_v2.Fs)
-pair = SongPianoPair(song_audio, "test_data/target_0001-1.wav", "song_midi.midi", "piano_midi.midi")
-pair.preprocess(basic_pitch_model)
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
 
+    songs_file = open("songs.json")
+
+    for song in songs_file:
+        song_file = song["filename"]
+        for piano_file in song["piano covers"]["filename"]:
+            try:
+                song_audio, _ = librosa.load(IN_FOLDER + song_file , sr=audio_alignment_v2.Fs)
+                name = os.path.splitext(piano_file)[0].split('_')[0] + "_" + os.path.splitext(piano_file)[0].split('_')[1]
+                pair = SongPianoPair(song_audio, IN_FOLDER + piano_file, OUT_FOLDER + name + "_song.midi", OUT_FOLDER + name + "_cover.midi")
+                pair.preprocess(basic_pitch_model)
+            except Exception as e:
+                print("Failed song", song_file, "cover", piano_file, "with exception", e)
