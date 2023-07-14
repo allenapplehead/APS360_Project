@@ -7,8 +7,10 @@ from basic_pitch import ICASSP_2022_MODEL_PATH
 
 import audio_alignment_v2
 
-IN_FOLDER = "test_data/"
-OUT_FOLDER = "clean_data/"
+import json
+
+IN_FOLDER = "data/dataset/"
+OUT_FOLDER = "data/clean_data/"
 
 class SongPianoPair():
     def __init__(self, raw_song_audio, raw_piano_audio_path, output_song_midi_path, output_piano_midi_path, temp_song_audio_path="temp.wav"):
@@ -32,9 +34,11 @@ class SongPianoPair():
 if __name__ == "__main__":
     basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
 
-    songs_file = open("songs.json")
+    file_path = "data/songs.json"
+    with open(file_path, "r") as json_file:
+            songs_file = json.load(json_file)
 
-    for song in songs_file:
+    for song in songs_file["songs"]:
         song_file = song["filename"]
         for piano_file in song["piano covers"]["filename"]:
             try:

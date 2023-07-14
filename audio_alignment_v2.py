@@ -56,7 +56,7 @@ def align_song_piano(
     midi_pm = sample.raw_piano_midi
 
     if np.power(song_audio, 2).sum() < 1:  # low energy: invalid file
-        print("invalid audio :", sample.original_song)
+        print("invalid audio")
         return
 
     rd = get_aligned_results(midi_pm=midi_pm, song_audio=song_audio)
