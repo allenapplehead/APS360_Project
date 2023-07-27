@@ -1,4 +1,4 @@
-# convert between midi to vector embedding
+# task: convert between midi to vector embedding
 import pretty_midi
 import numpy as np
 
@@ -37,8 +37,8 @@ def create_embeddings_with_autoencoder(piano_roll_segments):
     embeddings = np.mean(piano_roll_segments, axis=(1, 2))
     return embeddings
 
-# Example usage:
-midi_path = "path/to/your/midi/file.mid"
+# Ex
+midi_path = "Users/mindyslee/Downloadsto/midi/file.mid" 
 piano_roll_segments = midi_to_piano_roll(midi_path)
 embeddings = create_embeddings_with_autoencoder(piano_roll_segments)
 
