@@ -4,7 +4,7 @@ import librosa
 import csv
 import json
 
-output_dir = 'dataset/'
+output_dir = 'D:/data'
 video_id = 0
 
 
@@ -32,11 +32,22 @@ for song in songs:
     song_filename = song["filename"]
     song_id = song["id"]
 
+    song_num = int(song_filename.split("_")[0])
+
+    if song_num < 901:
+        num_song += 1
+        continue
+
     # Extracting audio from pop music video
     pop_music = 'https://www.youtube.com/watch?v='+ song_id
     print(pop_music)
-    with youtube_dl.YoutubeDL(ydl_opts_song) as ydl:
-        ydl.download([pop_music])  
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts_song) as ydl:
+            ydl.download([pop_music])  
+    except:
+        print("Failed to Download Song: ", num_song)
+        num_song += 1
+        continue
     
     covers = song["piano covers"]
     num_covers = len(covers["id"])
@@ -56,7 +67,11 @@ for song in songs:
 
         # Extracting audio from piano cover video
         piano_cover = 'https://www.youtube.com/watch?v=' + cover_id
-        with youtube_dl.YoutubeDL(ydl_opts_cover) as ydl:
-            ydl.download([piano_cover])
+        try:
+            with youtube_dl.YoutubeDL(ydl_opts_cover) as ydl:
+                ydl.download([piano_cover])
+        except:
+            continue
+        print("Done ", piano_cover)
     num_song += 1
 

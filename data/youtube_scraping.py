@@ -16,7 +16,6 @@ def has_non_encodable_characters(text, encoding='utf-8'):
     except UnicodeEncodeError:
         return True
 
-num_song = 0
 
 def get_videos(channel_url, num_song):
     ydl = youtube_dl.YoutubeDL()
@@ -28,8 +27,10 @@ def get_videos(channel_url, num_song):
     }
 
     # Extract information about all videos in the channel's playlist
-    all_videos = ydl.extract_info(channel_url, download=False, extra_info=options)
-
+    try:
+        all_videos = ydl.extract_info(channel_url, download=False, extra_info=options)
+    except:
+        return num_song
     # Sort the videos based on the popularity metric (e.g., views)
     popular_videos = sorted(all_videos['entries'], key=lambda x: x['view_count'], reverse=True)
 
@@ -84,7 +85,6 @@ def get_videos(channel_url, num_song):
         existing_array = existing_data["songs"]
         existing_array.append(data)
 
-        print(existing_data)
         
         with open(file_path, "w") as json_file:
             json.dump(existing_data, json_file, indent=4)
@@ -99,9 +99,8 @@ with open(csv_file, 'r') as file:
     rows = list(reader)
 
 rows = rows[1:]
-print(rows)
 
-num_song = 0
+num_song = 946
 for row in rows:
     url = row[1]
     num_song = get_videos(url, num_song)
