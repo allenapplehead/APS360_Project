@@ -18,8 +18,6 @@ import math
 import numpy as np
 import torch.nn.functional as F
 
-from layers import DecoderLayer, abs_positional_encoding
-
 class DenseBlock(nn.Module):
     def __init__(self, input_size, depth=5, in_channels=64):
         super(DenseBlock, self).__init__()
