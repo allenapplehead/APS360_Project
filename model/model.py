@@ -55,10 +55,10 @@ class DenseBlock(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, width):
+    def __init__(self, width, batch_size):
         super(Encoder, self).__init__()
 
-        self.in_channels = 1
+        self.in_channels = batch_size
         self.out_channels = 1
         self.kernel_size = (2, 3)
         # self.elu = nn.SELU(inplace=True)
@@ -100,7 +100,7 @@ class Encoder(nn.Module):
         return x
 
 class Decoder(nn.Module):
-    def __init__(self, width):
+    def __init__(self, width, batch_size):
         super(Decoder, self).__init__()
         
         self.width = width
@@ -113,7 +113,7 @@ class Decoder(nn.Module):
 
         self.dec_prelu2 = nn.PReLU()
         self.dec_norm2 = nn.LayerNorm(124)
-        self.dec_conv2 = nn.ConvTranspose2d(in_channels=self.width, out_channels=1, kernel_size=5)
+        self.dec_conv2 = nn.ConvTranspose2d(in_channels=self.width, out_channels=batch_size, kernel_size=5)
 
         self.pad = nn.ConstantPad2d((1, 1, 1, 0), value=0.)
         self.pad1 = nn.ConstantPad2d((1, 1, 0, 0), value=0.)
@@ -153,6 +153,11 @@ class PositionalEncoding(nn.Module):
         self.encoding[:, 1::2] = torch.cos(position * div_term)
         self.encoding = self.encoding.unsqueeze(0)
 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.encoding = self.encoding.to(device)
+
+
     def forward(self, x):
         # Add positional encoding to input embeddings
         print(self.encoding.shape)
@@ -173,12 +178,12 @@ class MusicTransformer(nn.Module):
         return out
 
 class Net(nn.Module):
-    def __init__(self, width) -> None:
+    def __init__(self, width, batch_size) -> None:
         super(Net, self).__init__()
 
-        self.encoder = Encoder(width=width)
+        self.encoder = Encoder(width=width, batch_size= batch_size)
         self.music_transfomer = MusicTransformer()
-        self.decoder = Decoder(width=width)
+        self.decoder = Decoder(width=width, batch_size=batch_size)
     
     def forward(self, x):
         x = self.encoder(x)
@@ -186,7 +191,5 @@ class Net(nn.Module):
         x = self.music_transfomer(x)
         print("Transformer Final Dimension", x.shape)
         x = self.decoder(x)
-
+        x = F.softmax(x, dim = 1)
         return x
-
-    
