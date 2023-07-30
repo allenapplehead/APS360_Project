@@ -142,9 +142,12 @@ def model_train(model, lr, batch_size, training_data, validation_data, num_epoch
         train_loss[epoch] = train_loss_total
         val_loss[epoch] = val_loss_total
 
+        # print(f'Epoch [{epoch+1}/{num_epochs}], '
+        #         f'Train Loss: {train_loss_total:.4f}, Train Loss: {train_loss_total:.4f}, '
+        #         f'Val Loss: {val_loss_total:.4f}, Val Loss: {val_loss_total:.4f}')
         print(f'Epoch [{epoch+1}/{num_epochs}], '
-                f'Train Loss: {train_loss_total:.4f}, Train Loss: {train_loss_total:.4f}, '
-                f'Val Loss: {val_loss_total:.4f}, Val Loss: {val_loss_total:.4f}')
+                f'Train Loss: {train_loss_total:.4f}, '
+                f'Val Loss: {val_loss_total:.4f}')
         torch.cuda.empty_cache()
 
 
