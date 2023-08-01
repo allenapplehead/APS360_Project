@@ -27,7 +27,7 @@ class DenseBlock(nn.Module):
         self.twidth = 2
         self.kernel_size = (self.twidth, 3)
 
-        print("In-channels: ",self.in_channels)
+        # print("In-channels: ",self.in_channels)
         for i in range(self.depth):
             dil = 2 ** i
             pad_length = self.twidth + (dil - 1) * (self.twidth - 1) - 1
@@ -41,15 +41,15 @@ class DenseBlock(nn.Module):
     def forward(self, x):
         skip = x
         for i in range(self.depth):
-            #print("Conv in-channels: ", getattr(self, 'conv{}'.format(i + 1)).in_channels)
-            print("New skip dimension: ", skip.shape)
+            ## print("Conv in-channels: ", getattr(self, 'conv{}'.format(i + 1)).in_channels)
+            # print("New skip dimension: ", skip.shape)
             out = getattr(self, 'pad{}'.format(i + 1))(skip)
             out = getattr(self, 'conv{}'.format(i + 1))(out)
             out = getattr(self, 'norm{}'.format(i + 1))(out)
             out = getattr(self, 'prelu{}'.format(i + 1))(out)
             #skip = torch.cat([out, skip], dim=1)
-            print("Finished Iteration ", i)
-            #print("New skip dimension: ", skip.shape)
+            # print("Finished Iteration ", i)
+            ## print("New skip dimension: ", skip.shape)
         return out
 
 
@@ -76,26 +76,26 @@ class Encoder(nn.Module):
         self.enc_prelu1 = nn.PReLU()
     
     def forward(self, x):
-        print("Beginning forward with dimension ", x.shape)
+        # print("Beginning forward with dimension ", x.shape)
         x = self.inp_conv(x)
 
-        print("Done 1 with final dimension ", x.shape)
+        # print("Done 1 with final dimension ", x.shape)
         x = self.inp_norm(x)
-        print("Done 2")
+        # print("Done 2")
         x = self.inp_prelu(x)
-        print("Done 3")
+        # print("Done 3")
 
         x = self.enc_dense1(x) 
-        print("Done 4 with final dimension ", x.shape)
+        # print("Done 4 with final dimension ", x.shape)
         
         x = self.pad1(x)
-        print("Done 5")
+        # print("Done 5")
         x = self.enc_conv1(x)
-        print("Done 6 with final dimension ", x.shape)
+        # print("Done 6 with final dimension ", x.shape)
         x = self.enc_norm1(x)
-        print("Done 7")
+        # print("Done 7")
         x = self.enc_prelu1(x)
-        print("Done Encoder")
+        # print("Done Encoder")
 
         return x
 
@@ -119,27 +119,27 @@ class Decoder(nn.Module):
         self.pad1 = nn.ConstantPad2d((1, 1, 0, 0), value=0.)
     
     def forward(self, x):
-        print("Beginning decoder forward with dimension ", x.shape)
+        # print("Beginning decoder forward with dimension ", x.shape)
 
         x = self.dec_prelu1(x)
-        print("Done 1 with final dimension ", x.shape)
+        # print("Done 1 with final dimension ", x.shape)
         x = self.dec_norm1(x)
-        print("Done 2")
+        # print("Done 2")
         x = self.dec_conv1(x)
-        print("Done 3 with final dimension ", x.shape)
+        # print("Done 3 with final dimension ", x.shape)
         x= x[..., :124]
         x = self.dec_dense1(x)
-        print("Done 4 with final dimension ", x.shape)
+        # print("Done 4 with final dimension ", x.shape)
 
         #x = self.pad1(x)
-        print("Done 5")
+        # print("Done 5")
         x = self.dec_norm2(x)
-        print("Done 6")
+        # print("Done 6")
         x = self.dec_conv2(x)
-        print("Done 7 with final dimension ", x.shape)
+        # print("Done 7 with final dimension ", x.shape)
         x= x[..., :128]
         x = self.dec_prelu2(x)
-        print("Done Decoder")
+        # print("Done Decoder")
         return x
 
 class PositionalEncoding(nn.Module):
@@ -160,7 +160,7 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x):
         # Add positional encoding to input embeddings
-        print(self.encoding.shape)
+        # print(self.encoding.shape)
         return x + self.encoding[:, :x.size(1)].detach()
     
 class MusicTransformer(nn.Module):
@@ -187,9 +187,9 @@ class Net(nn.Module):
     
     def forward(self, x):
         x = self.encoder(x)
-        print("Encoder Final Dimension", x.shape)
+        # print("Encoder Final Dimension", x.shape)
         x = self.music_transfomer(x)
-        print("Transformer Final Dimension", x.shape)
+        # print("Transformer Final Dimension", x.shape)
         x = self.decoder(x)
         x = F.softmax(x, dim = 1)
         return x
