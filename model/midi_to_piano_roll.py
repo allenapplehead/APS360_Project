@@ -58,7 +58,8 @@ def postprocess(output, cover):
     scaling = (max_velocity_cover - min_velocity_cover) / (max_value_output - min_value_output)
 
     # Begin output shift
-    output -= min_value_output
+    # output -= min_value_output
+    output = output.clone() - min_value_output # create copy to avoid inplace modification
     
     # Cut values below threshold
     output[output < 0] = 0
