@@ -31,13 +31,41 @@ def midi_to_piano_roll(midi_file_path, time_resolution=100):
             piano_roll[pitch, start_time_step:end_time_step] = note.velocity/127
 
 
-    sum= 0
-    for i in range(len(piano_roll)):
-        for j in range(len(piano_roll[i])):
-            sum += piano_roll[i][j]
-
     piano_roll = np.transpose(piano_roll)
     piano_roll =  torch.tensor(piano_roll, dtype=torch.float32)
 
     return piano_roll
 
+
+
+def postprocess(output, cover):
+    # Gather range values
+    min_note_threshold = 0.0001
+
+    cover_zero_mask = cover == 0
+    cover[cover_zero_mask] = 1
+
+    max_velocity_cover = torch.max(cover).item() * 127
+    cover_zero_mask = cover == 0
+    cover[cover_zero_mask] = 1
+    min_velocity_cover = torch.min(cover).item() * 127
+    cover[cover_zero_mask] = 0
+
+    max_value_output = torch.max(output).item()
+    min_value_output = min_note_threshold
+
+    # Rescale output range to song velocity range
+    scaling = (max_velocity_cover - min_velocity_cover) / (max_value_output - min_value_output)
+
+    # Begin output shift
+    output -= min_value_output
+    
+    # Cut values below threshold
+    output[output < 0] = 0
+
+    # Finish output scaling
+    output *= scaling
+    output[output != 0] += min_velocity_cover
+    output /= 127
+    
+    return output
