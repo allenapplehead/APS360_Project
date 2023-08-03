@@ -36,9 +36,9 @@ def pianoroll_to_midi(piano_roll, tempo=500000):  #120bpm we can adjust tempo if
     # MIDI program 0 for acoustic grand piano)
     # instrument = pretty_midi.Instrument(program=0)
 
-    tick_duration = midi_data.resolution / 4  # Calculate tick duration based on resolution and quarter notes (4)
+    # tick_duration = midi_data.resolution / 4  # Calculate tick duration based on resolution and quarter notes (4)
 
-   # for time_step, notes in enumerate(piano_roll):
+    # for time_step, notes in enumerate(piano_roll):
        # for pitch, velocity in enumerate(notes):
            # if velocity > 0:
                # start_time = time_step * tick_duration
