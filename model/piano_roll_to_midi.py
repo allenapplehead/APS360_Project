@@ -1,4 +1,4 @@
-#import pretty_midi # removed bc theres conflict in set_tempo bc both libraries have it 
+# using mido
 import numpy as np
 from mido import MidiFile, MidiTrack, Message, MetaMessage
 
@@ -26,6 +26,28 @@ def piano_roll_to_midi(piano_roll, tempo=500000):  #120bpm we can adjust tempo i
                 track.append(note_off)
 
     return mid
+
+# using pretty_midi instead
+#import pretty_midi
+
+#def piano_roll_to_midi(piano_roll, tempo=500000):  # 120bpm we can adjust tempo if we want
+    midi_data = pretty_midi.PrettyMIDI(initial_tempo=tempo)
+
+    # MIDI program 0 for acoustic grand piano)
+    instrument = pretty_midi.Instrument(program=0)
+
+    tick_duration = midi_data.resolution / 4  # Calculate tick duration based on resolution and quarter notes (4)
+
+   # for time_step, notes in enumerate(piano_roll):
+       # for pitch, velocity in enumerate(notes):
+           # if velocity > 0:
+               # start_time = time_step * tick_duration
+               # end_time = start_time + tick_duration
+               # note = pretty_midi.Note(velocity=int(velocity * 127), pitch=pitch, start=start_time, end=end_time)
+               # instrument.notes.append(note)
+   # midi_data.instruments.append(instrument)
+
+   # return midi_data
 
 # midi_file_output = 'midifilepath.mid'  #change
 # midi_file = piano_roll_to_midi(piano_roll) #replace
