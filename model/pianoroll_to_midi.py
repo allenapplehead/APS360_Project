@@ -2,7 +2,7 @@
 import numpy as np
 from mido import MidiFile, MidiTrack, Message, MetaMessage
 
-def piano_roll_to_midi(piano_roll, tempo=500000):  #120bpm we can adjust tempo if we want
+def pianoroll_to_midi(piano_roll, tempo=500000):  #120bpm we can adjust tempo if we want
 
     # Create MIDI file
     mid = MidiFile(ticks_per_beat=480) 
