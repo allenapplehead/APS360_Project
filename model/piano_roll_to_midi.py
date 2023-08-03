@@ -1,4 +1,4 @@
-import pretty_midi
+#import pretty_midi # removed bc theres conflict in set_tempo bc both libraries have it 
 import numpy as np
 from mido import MidiFile, MidiTrack, Message, MetaMessage
 
