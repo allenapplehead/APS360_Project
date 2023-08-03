@@ -12,8 +12,9 @@ def piano_roll_to_midi(piano_roll, tempo=500000):  #120bpm we can adjust tempo i
 
     # tempo as MetaMessage
     tempo_value = int(60 * 10**6 / tempo)  #seconds to microseconds
-    track.append(MetaMessage('set_tempo', tempo=tempo_value))
-
+    meta_msg = MetaMessage('set_tempo', tempo=tempo_value)
+    track.append(meta_msg)
+    
     tick_duration = mid.ticks_per_beat / 4 
 
     for time_step, notes in enumerate(piano_roll):
